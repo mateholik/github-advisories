@@ -1,0 +1,4 @@
+- semantic tags
+- debounce on search input
+- react query for fetching
+- update UI

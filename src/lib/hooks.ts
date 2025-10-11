@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { Advisory, ResponseAdvisory } from './types';
 
-export function useAdvisoriesList() {
+export function useFetchAdvisoriesList() {
   const [advisoriesList, setAdvisoriesList] = useState<Advisory[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -50,5 +50,40 @@ export function useAdvisoriesList() {
     advisoriesList,
     isLoading,
     error,
+  };
+}
+
+export function useFilterAdvisoriesList(advisoriesList: Advisory[] | null) {
+  const [searchText, setSearchText] = useState('');
+  const [selectedSeverity, setSelectedSeverity] = useState('all');
+
+  const severityOptions = useMemo(
+    () => Array.from(new Set(advisoriesList?.map((item) => item.severity))),
+    [advisoriesList]
+  );
+
+  const filteredBySearchAdvisoriesList = useMemo(
+    () =>
+      advisoriesList?.filter((item) =>
+        item.name.toLowerCase().includes(searchText.toLowerCase())
+      ),
+    [advisoriesList, searchText]
+  );
+
+  const filteredBySearchAndSeverityAdvisoriesList = useMemo(
+    () =>
+      selectedSeverity === 'all'
+        ? filteredBySearchAdvisoriesList
+        : filteredBySearchAdvisoriesList?.filter(
+            (item) => item.severity === selectedSeverity
+          ),
+    [filteredBySearchAdvisoriesList, selectedSeverity]
+  );
+  return {
+    searchText,
+    setSearchText,
+    setSelectedSeverity,
+    severityOptions,
+    filteredList: filteredBySearchAndSeverityAdvisoriesList,
   };
 }
