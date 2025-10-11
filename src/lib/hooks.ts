@@ -11,7 +11,7 @@ export function useAdvisoriesList() {
       setIsLoading(true);
       try {
         const response = await fetch(
-          'https://api.github.com/advisoriess?per_page=50'
+          'https://api.github.com/advisories?per_page=50'
         );
         const data: ResponseAdvisory[] = await response.json();
 
@@ -33,6 +33,8 @@ export function useAdvisoriesList() {
           description: advisory.description || '',
           severity: advisory.severity || 'low',
         }));
+
+        console.log(mappedData);
 
         setAdvisoriesList(mappedData);
       } catch (error) {
