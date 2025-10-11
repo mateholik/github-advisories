@@ -23,11 +23,24 @@ export default function Homepage() {
           {advisoriesList?.map((advisory) => (
             <AccordionItem key={advisory.name} value={advisory.name}>
               <AccordionTrigger>
-                <div>
-                  <div className='font-medium'>{advisory.name}</div>
+                <div className='space-y-2'>
+                  <div className='font-bold'>{advisory.name}</div>
 
-                  <div className='text-xs'>{advisory.cveId}</div>
-                  <div>{advisory.severity}</div>
+                  <div className='text-xs text-gray-600'>{advisory.cveId}</div>
+                  <div
+                    className={`border px-2 inline-block rounded
+                      ${
+                        advisory.severity === 'critical'
+                          ? 'text-red-700 border-red-700'
+                          : advisory.severity === 'high'
+                          ? 'text-red-500 border-red-500 '
+                          : advisory.severity === 'medium'
+                          ? 'text-yellow-500 border-yellow-500'
+                          : ''
+                      }`}
+                  >
+                    {advisory.severity}
+                  </div>
                 </div>
               </AccordionTrigger>
               <AccordionContent>
