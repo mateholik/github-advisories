@@ -9,8 +9,11 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 
+import Markdown from 'react-markdown';
+
 export default function Homepage() {
   const { advisoriesList, isLoading, error } = useAdvisoriesList();
+
   return (
     <div>
       {isLoading && <Loader />}
@@ -27,7 +30,11 @@ export default function Homepage() {
                   <div>{advisory.severity}</div>
                 </div>
               </AccordionTrigger>
-              <AccordionContent>{advisory.description} </AccordionContent>
+              <AccordionContent>
+                <div className='prose'>
+                  <Markdown>{advisory.description}</Markdown>
+                </div>
+              </AccordionContent>
             </AccordionItem>
           ))}
         </Accordion>
