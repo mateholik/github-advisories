@@ -1,14 +1,7 @@
 import { Input } from '@/components/ui/input';
 import ErrorMessage from '../components/ErrorMessage';
 import Loader from '../components/Loader';
-import { useFetchAdvisoriesList, useFilterAdvisoriesList } from '../lib/hooks';
-
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion';
+import { useFilterAdvisoriesList } from '../lib/hooks';
 
 import {
   Select,
@@ -17,25 +10,46 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import AdvisoriesList from '@/components/AdvisoriesList';
 
-import Markdown from 'react-markdown';
+import { useQuery } from '@tanstack/react-query';
+import type { ResponseAdvisory } from '@/lib/types';
 
 export default function Homepage() {
-  const { advisoriesList, isLoading, error } = useFetchAdvisoriesList();
+  const {
+    data = null,
+    isFetching,
+    error,
+  } = useQuery({
+    queryKey: ['advisories'],
+    queryFn: async (): Promise<ResponseAdvisory[]> => {
+      const response = await fetch(
+        'https://api.github.com/advisories?per_page=50'
+      );
+      if (!response.ok) throw new Error('Failed to fetch advisories');
+      return await response.json();
+    },
+  });
+
   const {
     searchText,
     setSearchText,
     setSelectedSeverity,
     severityOptions,
-    filteredList,
-  } = useFilterAdvisoriesList(advisoriesList);
+    filteredAdvisoriesList,
+  } = useFilterAdvisoriesList(data);
+
+  // useEffect(() => {
+  //   fetchList();
+  // }, [fetchList]);
+
   return (
     <div>
-      {isLoading && <Loader />}
+      {isFetching && <Loader />}
 
-      {error && <ErrorMessage errorMessage={error} />}
+      {error && <ErrorMessage errorMessage={error.message} />}
 
-      {filteredList && (
+      {filteredAdvisoriesList && !error && (
         <>
           <div className='grid grid-cols-2 gap-x-4 py-8'>
             <Input
@@ -62,44 +76,11 @@ export default function Homepage() {
             </Select>
           </div>
 
-          <Accordion type='single' collapsible>
-            {filteredList?.map((advisory) => (
-              <AccordionItem key={advisory.name} value={advisory.name}>
-                <AccordionTrigger>
-                  <div className='space-y-2'>
-                    <div className='text-xl font-bold'>{advisory.name}</div>
-
-                    <div className='text-xs text-gray-600'>
-                      {advisory.cveId}
-                    </div>
-                    <div
-                      className={`border px-2 inline-block rounded
-                      ${
-                        advisory.severity === 'critical'
-                          ? 'text-red-700 border-red-700'
-                          : advisory.severity === 'high'
-                          ? 'text-red-500 border-red-500 '
-                          : advisory.severity === 'medium'
-                          ? 'text-yellow-500 border-yellow-500'
-                          : ''
-                      }`}
-                    >
-                      {advisory.severity}
-                    </div>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent>
-                  <div className='prose'>
-                    <Markdown>{advisory.description}</Markdown>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
+          <AdvisoriesList advisoriesList={filteredAdvisoriesList} />
         </>
       )}
 
-      {filteredList && filteredList.length === 0 && (
+      {filteredAdvisoriesList && filteredAdvisoriesList.length === 0 && (
         <ErrorMessage errorMessage='No items found' />
       )}
     </div>
