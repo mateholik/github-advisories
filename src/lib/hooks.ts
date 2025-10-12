@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import type { ResponseAdvisory } from './types';
+import semver from 'semver';
 
 export function useFilterAdvisoriesList(
   advisoriesList: ResponseAdvisory[] | null
@@ -66,8 +67,11 @@ export const useSearchPageForm = () => {
     const errors: FormErrors = {};
     if (!formData.packageName.trim())
       errors.packageName = 'This field is required';
-    if (!formData.packageVersion.trim())
-      errors.packageVersion = 'This field is required';
+    if (
+      formData.packageVersion.trim().length > 0 &&
+      !semver.valid(formData.packageVersion.trim())
+    )
+      errors.packageVersion = 'Invalid version format. Example: 1.2.3';
 
     setFormErrors(errors);
 

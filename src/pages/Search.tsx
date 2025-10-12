@@ -39,7 +39,12 @@ export default function Search() {
     ],
     queryFn: async (): Promise<ResponseAdvisory[]> => {
       const params = new URLSearchParams();
-      if (formData.packageName) params.append('affects', formData.packageName);
+      if (formData.packageName) {
+        const affectsValue = formData.packageVersion
+          ? `${formData.packageName}@${formData.packageVersion}`
+          : formData.packageName;
+        params.append('affects', affectsValue);
+      }
       if (selectedSeverity !== 'all')
         params.append('severity', selectedSeverity);
       params.append('per_page', '50');
@@ -52,6 +57,8 @@ export default function Search() {
     },
     enabled: false,
   });
+
+  console.log(data);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
