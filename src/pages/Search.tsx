@@ -1,8 +1,10 @@
 import AdvisoriesList from '@/components/AdvisoriesList';
 import ErrorMessage from '@/components/ErrorMessage';
+import InputWrapper from '@/components/InputWrapper';
 import Loader from '@/components/Loader';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -11,14 +13,16 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { SEVERITI_OPTIONS } from '@/lib/consts';
+import { useSearchPageForm } from '@/lib/hooks';
 import type { ResponseAdvisory } from '@/lib/types';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 
 export default function Search() {
-  const [packageName, setPackageName] = useState('');
-  const [packageVersion, setPackageVersion] = useState('');
   const [selectedSeverity, setSelectedSeverity] = useState('all');
+
+  const { formData, formErrors, isValid, handleInputChange } =
+    useSearchPageForm();
 
   const {
     data = null,
@@ -27,10 +31,15 @@ export default function Search() {
     error,
     refetch,
   } = useQuery({
-    queryKey: ['advisories', packageName, packageVersion, selectedSeverity],
+    queryKey: [
+      'advisories',
+      formData.packageName,
+      formData.packageVersion,
+      selectedSeverity,
+    ],
     queryFn: async (): Promise<ResponseAdvisory[]> => {
       const params = new URLSearchParams();
-      if (packageName) params.append('affects', packageName);
+      if (formData.packageName) params.append('affects', formData.packageName);
       if (selectedSeverity !== 'all')
         params.append('severity', selectedSeverity);
       params.append('per_page', '50');
@@ -46,35 +55,54 @@ export default function Search() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (!isValid()) return;
     refetch();
   };
 
   return (
     <div>
-      <form onSubmit={handleSubmit} className='grid grid-cols-3 gap-x-4 py-8'>
-        <Input
-          value={packageName}
-          onChange={(event) => setPackageName(event.target.value.trim())}
-          placeholder='Package name'
+      <form onSubmit={handleSubmit} className='grid grid-cols-3 gap-4 py-8'>
+        <InputWrapper
+          label='Package Name'
+          value={formData.packageName}
+          onChange={handleInputChange}
+          id='packageName'
+          name='packageName'
+          type='text'
+          placeholder='react'
+          error={formErrors.packageName}
         />
-        <Input
-          placeholder='Package version'
-          value={packageVersion}
-          onChange={(event) => setPackageVersion(event.target.value.trim())}
+
+        <InputWrapper
+          label='Package Version'
+          value={formData.packageVersion}
+          onChange={handleInputChange}
+          id='packageVersion'
+          name='packageVersion'
+          type='text'
+          placeholder='19.1.1'
+          error={formErrors.packageVersion}
         />
-        <Select onValueChange={(value) => setSelectedSeverity(value)}>
-          <SelectTrigger className='w-full'>
-            <SelectValue placeholder='Severity' />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value='all'>All</SelectItem>
-            {SEVERITI_OPTIONS.map((option) => (
-              <SelectItem className='capitalize' key={option} value={option}>
-                {option}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <div className='space-y-2'>
+          <Label>Severity</Label>
+          <Select
+            name='severity'
+            onValueChange={(value) => setSelectedSeverity(value)}
+          >
+            <SelectTrigger className='w-full'>
+              <SelectValue placeholder='Severity' />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value='all'>All</SelectItem>
+              {SEVERITI_OPTIONS.map((option) => (
+                <SelectItem className='capitalize' key={option} value={option}>
+                  {option}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
         <Button type='submit'>Search</Button>
       </form>
       {isFetching && <Loader />}

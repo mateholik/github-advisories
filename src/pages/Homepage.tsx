@@ -19,6 +19,7 @@ export default function Homepage() {
   const {
     data = null,
     isFetching,
+    isError,
     error,
   } = useQuery({
     queryKey: ['advisories'],
@@ -29,6 +30,7 @@ export default function Homepage() {
       if (!response.ok) throw new Error('Failed to fetch advisories');
       return await response.json();
     },
+    staleTime: 1000 * 60 * 5, // 5 min
   });
 
   const {
@@ -39,17 +41,13 @@ export default function Homepage() {
     filteredAdvisoriesList,
   } = useFilterAdvisoriesList(data);
 
-  // useEffect(() => {
-  //   fetchList();
-  // }, [fetchList]);
-
   return (
     <div>
       {isFetching && <Loader />}
 
-      {error && <ErrorMessage errorMessage={error.message} />}
+      {isError && <ErrorMessage errorMessage={error.message} />}
 
-      {filteredAdvisoriesList && !error && (
+      {filteredAdvisoriesList && !isError && !isFetching && (
         <>
           <div className='grid grid-cols-2 gap-x-4 py-8'>
             <Input
@@ -77,11 +75,11 @@ export default function Homepage() {
           </div>
 
           <AdvisoriesList advisoriesList={filteredAdvisoriesList} />
-        </>
-      )}
 
-      {filteredAdvisoriesList && filteredAdvisoriesList.length === 0 && (
-        <ErrorMessage errorMessage='No items found' />
+          {filteredAdvisoriesList.length === 0 && (
+            <ErrorMessage errorMessage='No items found' />
+          )}
+        </>
       )}
     </div>
   );

@@ -38,3 +38,47 @@ export function useFilterAdvisoriesList(
     filteredAdvisoriesList: filteredBySearchAndSeverityAdvisoriesList,
   };
 }
+
+type FormData = {
+  packageName: string;
+  packageVersion: string;
+};
+
+type FormErrors = {
+  packageName?: string;
+  packageVersion?: string;
+};
+
+export const useSearchPageForm = () => {
+  const [formData, setFormData] = useState<FormData>({
+    packageName: '',
+    packageVersion: '',
+  });
+  const [formErrors, setFormErrors] = useState<FormErrors>({});
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormErrors((prev) => ({ ...prev, [name]: '' }));
+  };
+
+  const isValid = () => {
+    const errors: FormErrors = {};
+    if (!formData.packageName.trim())
+      errors.packageName = 'This field is required';
+    if (!formData.packageVersion.trim())
+      errors.packageVersion = 'This field is required';
+
+    setFormErrors(errors);
+
+    const isValid = !Object.keys(errors).length;
+    return isValid;
+  };
+
+  return {
+    formData,
+    formErrors,
+    handleInputChange,
+    isValid,
+  };
+};
