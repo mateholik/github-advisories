@@ -9,6 +9,8 @@ export function useFilterAdvisoriesList(
   const [searchText, setSearchText] = useState('');
   const [selectedSeverity, setSelectedSeverity] = useState('all');
 
+  const debouncedSearchText = useDebounce(searchText, 200);
+
   const severityOptions = useMemo(
     () =>
       Array.from(new Set(advisoriesList?.map((item) => item.severity) || [])),
@@ -18,9 +20,9 @@ export function useFilterAdvisoriesList(
   const filteredBySearchAdvisoriesList = useMemo(
     () =>
       advisoriesList?.filter((item) =>
-        item.summary.toLowerCase().includes(searchText.toLowerCase())
+        item.summary.toLowerCase().includes(debouncedSearchText.toLowerCase())
       ),
-    [advisoriesList, searchText]
+    [advisoriesList, debouncedSearchText]
   );
 
   const filteredBySearchAndSeverityAdvisoriesList = useMemo(
@@ -133,4 +135,15 @@ export function useAdvisorySearchParams() {
 
     searchParamsString: searchParams.toString(),
   };
+}
+
+export function useDebounce<T>(value: T, time = 500): T {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const timerId = setTimeout(() => setDebouncedValue(value), time);
+    return () => clearTimeout(timerId);
+  }, [value, time]);
+
+  return debouncedValue;
 }
