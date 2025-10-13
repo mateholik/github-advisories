@@ -15,7 +15,7 @@ import AdvisoriesList from '@/components/AdvisoriesList';
 import { useQuery } from '@tanstack/react-query';
 import type { ResponseAdvisory } from '@/lib/types';
 import { Button } from '@/components/ui/button';
-import { SEVERITI_OPTIONS } from '@/lib/consts';
+import { SEVERITY_OPTIONS } from '@/lib/consts';
 import { useMemo } from 'react';
 
 export default function Homepage() {
@@ -76,7 +76,7 @@ export default function Homepage() {
                 <SelectValue placeholder='Severity' />
               </SelectTrigger>
               <SelectContent>
-                {SEVERITI_OPTIONS.map((option) => (
+                {SEVERITY_OPTIONS.map((option) => (
                   <SelectItem
                     className='capitalize'
                     key={option}

@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { SEVERITI_OPTIONS } from '@/lib/consts';
+import { SEVERITY_OPTIONS } from '@/lib/consts';
 import { useAdvisorySearchParams, useSearchPageForm } from '@/lib/hooks';
 import type { ResponseAdvisory } from '@/lib/types';
 import { useQuery } from '@tanstack/react-query';
@@ -109,7 +109,7 @@ export default function Search() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {SEVERITI_OPTIONS.map((option) => (
+              {SEVERITY_OPTIONS.map((option) => (
                 <SelectItem className='capitalize' key={option} value={option}>
                   {option}
                 </SelectItem>
