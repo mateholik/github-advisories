@@ -13,57 +13,66 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { SEVERITI_OPTIONS } from '@/lib/consts';
-import { useSearchPageForm } from '@/lib/hooks';
+import { useAdvisorySearchParams, useSearchPageForm } from '@/lib/hooks';
 import type { ResponseAdvisory } from '@/lib/types';
 import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useMemo } from 'react';
 
 export default function Search() {
-  const [selectedSeverity, setSelectedSeverity] = useState('all');
+  const { affects, severity, handleSetSearchParams, searchParamsString } =
+    useAdvisorySearchParams();
 
-  const { formData, formErrors, isValid, handleInputChange } =
-    useSearchPageForm();
+  const [packageName = '', packageVersion = ''] = affects.split('@');
+
+  const initialFormData = useMemo(
+    () => ({
+      packageName: packageName,
+      packageVersion: packageVersion,
+    }),
+    [packageName, packageVersion]
+  );
+
+  const {
+    formData,
+    formErrors,
+    isValid,
+    handleInputChange,
+    selectedSeverity,
+    setSelectedSeverity,
+  } = useSearchPageForm({
+    initialFormData: initialFormData,
+    initialSeverity: severity,
+  });
+
+  const fetchAdvisories = async (): Promise<ResponseAdvisory[]> => {
+    const response = await fetch(
+      `https://api.github.com/advisories?${searchParamsString}&per_page=50`
+    );
+    if (!response.ok) throw new Error('Failed to fetch filtered advisories');
+    return await response.json();
+  };
 
   const {
     data = null,
     isFetching,
     isError,
     error,
-    refetch,
   } = useQuery({
-    queryKey: [
-      'advisories',
-      formData.packageName,
-      formData.packageVersion,
-      selectedSeverity,
-    ],
-    queryFn: async (): Promise<ResponseAdvisory[]> => {
-      const params = new URLSearchParams();
-      if (formData.packageName) {
-        const affectsValue = formData.packageVersion
-          ? `${formData.packageName}@${formData.packageVersion}`
-          : formData.packageName;
-        params.append('affects', affectsValue);
-      }
-      if (selectedSeverity !== 'all')
-        params.append('severity', selectedSeverity);
-      params.append('per_page', '50');
-
-      const response = await fetch(
-        `https://api.github.com/advisories?${params.toString()}`
-      );
-      if (!response.ok) throw new Error('Failed to fetch filtered advisories');
-      return await response.json();
-    },
-    enabled: false,
+    queryKey: ['advisories', affects, severity],
+    queryFn: () => fetchAdvisories(),
+    enabled: !!affects,
+    staleTime: 1000 * 60 * 5,
   });
 
-  console.log(data);
-
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!isValid()) return;
-    refetch();
+
+    handleSetSearchParams(
+      formData.packageName,
+      formData.packageVersion,
+      selectedSeverity
+    );
   };
 
   return (
@@ -79,7 +88,6 @@ export default function Search() {
           placeholder='react'
           error={formErrors.packageName}
         />
-
         <InputWrapper
           label='Package Version'
           value={formData.packageVersion}
@@ -95,9 +103,10 @@ export default function Search() {
           <Select
             name='severity'
             onValueChange={(value) => setSelectedSeverity(value)}
+            value={selectedSeverity}
           >
             <SelectTrigger className='w-full'>
-              <SelectValue placeholder='Severity' />
+              <SelectValue />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value='all'>All</SelectItem>
@@ -109,7 +118,6 @@ export default function Search() {
             </SelectContent>
           </Select>
         </div>
-
         <Button type='submit'>Search</Button>
       </form>
       {isFetching && <Loader />}

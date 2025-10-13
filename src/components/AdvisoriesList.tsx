@@ -17,7 +17,7 @@ export default function AdvisoriesList({
   return (
     <Accordion type='single' collapsible>
       {advisoriesList?.map((advisory) => (
-        <AccordionItem key={advisory.summary} value={advisory.summary}>
+        <AccordionItem key={advisory.ghsa_id} value={advisory.summary}>
           <AccordionTrigger>
             <div className='space-y-2'>
               <div className='text-xl font-bold'>{advisory.summary}</div>

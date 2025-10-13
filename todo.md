@@ -2,3 +2,4 @@
 - debounce on search input
 - update UI
 - 404 page
+- Does search page fetches only global advisories?
