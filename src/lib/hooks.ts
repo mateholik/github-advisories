@@ -1,38 +1,24 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type { ResponseAdvisory } from './types';
 import semver from 'semver';
 import { useSearchParams } from 'react-router';
 
-export function useFilterAdvisoriesList(
-  advisoriesList: ResponseAdvisory[] | null
-) {
+export function useFilterAdvisoriesList() {
   const [searchText, setSearchText] = useState('');
   const [selectedSeverity, setSelectedSeverity] = useState('all');
 
-  const debouncedSearchText = useDebounce(searchText, 200);
+  const debouncedSearchText = useDebounce(searchText, 400);
 
-  const severityOptions = useMemo(
-    () =>
-      Array.from(new Set(advisoriesList?.map((item) => item.severity) || [])),
-    [advisoriesList]
-  );
-
-  const filteredBySearchAdvisoriesList = useMemo(
-    () =>
-      advisoriesList?.filter((item) =>
-        item.summary.toLowerCase().includes(debouncedSearchText.toLowerCase())
-      ),
-    [advisoriesList, debouncedSearchText]
-  );
-
-  const filteredBySearchAndSeverityAdvisoriesList = useMemo(
-    () =>
-      selectedSeverity === 'all'
-        ? filteredBySearchAdvisoriesList
-        : filteredBySearchAdvisoriesList?.filter(
-            (item) => item.severity === selectedSeverity
-          ),
-    [filteredBySearchAdvisoriesList, selectedSeverity]
+  const filterByNameAndSeverity = useCallback(
+    (item: ResponseAdvisory) => {
+      return (
+        item.summary
+          .toLowerCase()
+          .includes(debouncedSearchText.toLowerCase()) &&
+        (selectedSeverity === 'all' || item.severity === selectedSeverity)
+      );
+    },
+    [selectedSeverity, debouncedSearchText]
   );
 
   const clearForm = () => {
@@ -43,9 +29,8 @@ export function useFilterAdvisoriesList(
     searchText,
     setSearchText,
     setSelectedSeverity,
-    severityOptions,
     selectedSeverity,
-    filteredAdvisoriesList: filteredBySearchAndSeverityAdvisoriesList,
+    filterByNameAndSeverity,
     clearForm,
   };
 }

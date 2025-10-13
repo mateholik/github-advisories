@@ -109,7 +109,6 @@ export default function Search() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value='all'>All</SelectItem>
               {SEVERITI_OPTIONS.map((option) => (
                 <SelectItem className='capitalize' key={option} value={option}>
                   {option}

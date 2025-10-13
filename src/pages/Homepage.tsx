@@ -15,6 +15,8 @@ import AdvisoriesList from '@/components/AdvisoriesList';
 import { useQuery } from '@tanstack/react-query';
 import type { ResponseAdvisory } from '@/lib/types';
 import { Button } from '@/components/ui/button';
+import { SEVERITI_OPTIONS } from '@/lib/consts';
+import { useMemo } from 'react';
 
 export default function Homepage() {
   const {
@@ -38,11 +40,15 @@ export default function Homepage() {
     searchText,
     setSearchText,
     setSelectedSeverity,
-    severityOptions,
-    filteredAdvisoriesList,
+    filterByNameAndSeverity,
     clearForm,
     selectedSeverity,
-  } = useFilterAdvisoriesList(data);
+  } = useFilterAdvisoriesList();
+
+  const filteredList = useMemo(
+    () => data?.filter(filterByNameAndSeverity) || [],
+    [data, filterByNameAndSeverity]
+  );
 
   return (
     <div>
@@ -54,7 +60,7 @@ export default function Homepage() {
 
       {isError && <ErrorMessage errorMessage={error.message} />}
 
-      {filteredAdvisoriesList && !isError && !isFetching && (
+      {filteredList && !isError && !isFetching && (
         <>
           <div className='grid md:grid-cols-3 gap-4 py-8'>
             <Input
@@ -70,8 +76,7 @@ export default function Homepage() {
                 <SelectValue placeholder='Severity' />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value='all'>All</SelectItem>
-                {severityOptions.map((option) => (
+                {SEVERITI_OPTIONS.map((option) => (
                   <SelectItem
                     className='capitalize'
                     key={option}
@@ -85,9 +90,9 @@ export default function Homepage() {
             <Button onClick={clearForm}>Clear</Button>
           </div>
 
-          <AdvisoriesList advisoriesList={filteredAdvisoriesList} />
+          <AdvisoriesList advisoriesList={filteredList} />
 
-          {filteredAdvisoriesList.length === 0 && (
+          {filteredList.length === 0 && (
             <ErrorMessage errorMessage='No items found' />
           )}
         </>
