@@ -13,10 +13,11 @@ import {
 import AdvisoriesList from '@/components/AdvisoriesList';
 
 import { useQuery } from '@tanstack/react-query';
-import type { ResponseAdvisory } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { SEVERITY_OPTIONS } from '@/lib/consts';
 import { useMemo } from 'react';
+import { fetchAdvisories } from '@/lib/api';
+import Count from '@/components/Count';
 
 export default function Homepage() {
   const {
@@ -26,13 +27,7 @@ export default function Homepage() {
     error,
   } = useQuery({
     queryKey: ['advisories'],
-    queryFn: async (): Promise<ResponseAdvisory[]> => {
-      const response = await fetch(
-        'https://api.github.com/advisories?per_page=50'
-      );
-      if (!response.ok) throw new Error('Failed to fetch advisories');
-      return await response.json();
-    },
+    queryFn: () => fetchAdvisories(),
     staleTime: 1000 * 60 * 5, // 5 min
   });
 
@@ -88,6 +83,9 @@ export default function Homepage() {
               </SelectContent>
             </Select>
             <Button onClick={clearForm}>Clear</Button>
+          </div>
+          <div className='-mt-4 mb-4'>
+            <Count amount={filteredList.length} />
           </div>
 
           <AdvisoriesList advisoriesList={filteredList} />

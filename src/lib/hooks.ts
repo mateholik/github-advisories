@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { ResponseAdvisory } from './types';
 import semver from 'semver';
 import { useSearchParams } from 'react-router';
@@ -117,13 +117,16 @@ export function useAdvisorySearchParams() {
     if (severity && severity !== 'all') params.severity = severity;
     setSearchParams(params);
   };
+  const searchParamsObject = useMemo(
+    () => Object.fromEntries(searchParams.entries()),
+    [searchParams]
+  );
 
   return {
     affects,
     severity,
     handleSetSearchParams,
-
-    searchParamsString: searchParams.toString(),
+    searchParamsObject,
   };
 }
 

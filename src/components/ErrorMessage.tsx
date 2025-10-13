@@ -10,6 +10,7 @@ export default function ErrorMessage({ errorMessage }: ErrorMessageProps) {
         alt='eror-icon'
         width='16'
         height='16'
+        loading='lazy'
       />
       {errorMessage}
     </p>

@@ -1,4 +1,5 @@
 import AdvisoriesList from '@/components/AdvisoriesList';
+import Count from '@/components/Count';
 import ErrorMessage from '@/components/ErrorMessage';
 import InputWrapper from '@/components/InputWrapper';
 import Loader from '@/components/Loader';
@@ -12,14 +13,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { fetchAdvisories } from '@/lib/api';
 import { SEVERITY_OPTIONS } from '@/lib/consts';
 import { useAdvisorySearchParams, useSearchPageForm } from '@/lib/hooks';
-import type { ResponseAdvisory } from '@/lib/types';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
 export default function Search() {
-  const { affects, severity, handleSetSearchParams, searchParamsString } =
+  const { affects, severity, handleSetSearchParams, searchParamsObject } =
     useAdvisorySearchParams();
 
   const [packageName = '', packageVersion = ''] = affects.split('@');
@@ -44,14 +45,6 @@ export default function Search() {
     initialSeverity: severity,
   });
 
-  const fetchAdvisories = async (): Promise<ResponseAdvisory[]> => {
-    const response = await fetch(
-      `https://api.github.com/advisories?${searchParamsString}&per_page=50`
-    );
-    if (!response.ok) throw new Error('Failed to fetch filtered advisories');
-    return await response.json();
-  };
-
   const {
     data = null,
     isFetching,
@@ -59,7 +52,7 @@ export default function Search() {
     error,
   } = useQuery({
     queryKey: ['advisories', affects, severity],
-    queryFn: () => fetchAdvisories(),
+    queryFn: () => fetchAdvisories(searchParamsObject),
     enabled: !!affects,
     staleTime: 1000 * 60 * 5,
   });
@@ -119,6 +112,7 @@ export default function Search() {
         </div>
         <Button type='submit'>Search</Button>
       </form>
+
       {isFetching && <Loader />}
 
       {isError && <ErrorMessage errorMessage={error.message} />}
@@ -127,7 +121,12 @@ export default function Search() {
         !isFetching &&
         !isError &&
         (data.length > 0 ? (
-          <AdvisoriesList advisoriesList={data} />
+          <>
+            <div className='-mt-4 mb-4'>
+              <Count amount={data.length} />
+            </div>
+            <AdvisoriesList advisoriesList={data} />
+          </>
         ) : (
           <ErrorMessage errorMessage='No advisories found' />
         ))}
