@@ -20,7 +20,7 @@ export default function AdvisoriesList({
         <AccordionItem key={advisory.ghsa_id} value={advisory.summary}>
           <AccordionTrigger>
             <div className='space-y-2'>
-              <div className='text-xl font-bold'>{advisory.summary}</div>
+              <div className='md:text-xl font-bold'>{advisory.summary}</div>
 
               <div className='text-xs text-gray-600'>{advisory.cve_id}</div>
               <div

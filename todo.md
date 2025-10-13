@@ -1,4 +1,2 @@
 - semantic tags
-- debounce on search input
 - update UI
-- Does search page fetches only global advisories?

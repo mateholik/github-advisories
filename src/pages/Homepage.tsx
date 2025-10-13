@@ -14,6 +14,7 @@ import AdvisoriesList from '@/components/AdvisoriesList';
 
 import { useQuery } from '@tanstack/react-query';
 import type { ResponseAdvisory } from '@/lib/types';
+import { Button } from '@/components/ui/button';
 
 export default function Homepage() {
   const {
@@ -39,23 +40,32 @@ export default function Homepage() {
     setSelectedSeverity,
     severityOptions,
     filteredAdvisoriesList,
+    clearForm,
+    selectedSeverity,
   } = useFilterAdvisoriesList(data);
 
   return (
     <div>
-      {isFetching && <Loader />}
+      {isFetching && (
+        <div className='pt-8'>
+          <Loader />
+        </div>
+      )}
 
       {isError && <ErrorMessage errorMessage={error.message} />}
 
       {filteredAdvisoriesList && !isError && !isFetching && (
         <>
-          <div className='grid grid-cols-2 gap-x-4 py-8'>
+          <div className='grid md:grid-cols-3 gap-4 py-8'>
             <Input
               value={searchText}
               onChange={(event) => setSearchText(event.target.value)}
               placeholder='Search'
             />
-            <Select onValueChange={(value) => setSelectedSeverity(value)}>
+            <Select
+              value={selectedSeverity}
+              onValueChange={(value) => setSelectedSeverity(value)}
+            >
               <SelectTrigger className='w-full'>
                 <SelectValue placeholder='Severity' />
               </SelectTrigger>
@@ -72,6 +82,7 @@ export default function Homepage() {
                 ))}
               </SelectContent>
             </Select>
+            <Button onClick={clearForm}>Clear</Button>
           </div>
 
           <AdvisoriesList advisoriesList={filteredAdvisoriesList} />

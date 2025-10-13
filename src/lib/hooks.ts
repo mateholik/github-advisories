@@ -34,12 +34,19 @@ export function useFilterAdvisoriesList(
           ),
     [filteredBySearchAdvisoriesList, selectedSeverity]
   );
+
+  const clearForm = () => {
+    setSearchText('');
+    setSelectedSeverity('all');
+  };
   return {
     searchText,
     setSearchText,
     setSelectedSeverity,
     severityOptions,
+    selectedSeverity,
     filteredAdvisoriesList: filteredBySearchAndSeverityAdvisoriesList,
+    clearForm,
   };
 }
 
@@ -68,8 +75,6 @@ export const useSearchPageForm = ({
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [selectedSeverity, setSelectedSeverity] = useState(initialSeverity);
   const [formErrors, setFormErrors] = useState<FormErrors>({});
-
-  console.log({ initialFormData });
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;

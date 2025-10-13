@@ -77,7 +77,7 @@ export default function Search() {
 
   return (
     <div>
-      <form onSubmit={handleSubmit} className='grid grid-cols-3 gap-4 py-8'>
+      <form onSubmit={handleSubmit} className='grid md:grid-cols-3 gap-4 py-8'>
         <InputWrapper
           label='Package Name'
           value={formData.packageName}
