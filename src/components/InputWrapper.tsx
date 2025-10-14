@@ -2,7 +2,7 @@ import ErrorMessage from './ErrorMessage';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 
-type InputProps = {
+type InputWrapperProps = {
   label: string;
   value: string;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -22,7 +22,7 @@ export default function InputWrapper({
   name,
   type,
   placeholder,
-}: InputProps) {
+}: InputWrapperProps) {
   return (
     <div className="space-y-2">
       <Label htmlFor={id}>{label}</Label>

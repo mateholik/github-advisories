@@ -1,23 +1,17 @@
+import { useQuery } from '@tanstack/react-query';
+import { useMemo } from 'react';
+
 import AdvisoriesList from '@/components/AdvisoriesList';
 import Count from '@/components/Count';
 import ErrorMessage from '@/components/ErrorMessage';
 import InputWrapper from '@/components/InputWrapper';
 import Loader from '@/components/Loader';
+import SelectWrapper from '@/components/SelectWrapper';
 import { Button } from '@/components/ui/button';
 
-import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { fetchAdvisories } from '@/lib/api';
 import { SEVERITY_OPTIONS } from '@/lib/consts';
 import { useQueryParams, useSearchPageForm } from '@/lib/hooks';
-import { useQuery } from '@tanstack/react-query';
-import { useMemo } from 'react';
 
 export default function Search() {
   const { affects, severity, handleSetSearchParams, searchParamsObject } = useQueryParams();
@@ -65,7 +59,10 @@ export default function Search() {
 
   return (
     <div>
-      <form onSubmit={handleSubmit} className="grid gap-4 py-8 md:grid-cols-3">
+      <h1 className="py-12 text-center text-2xl md:py-20 md:text-4xl">
+        Search for Latest global security advisories
+      </h1>
+      <form onSubmit={handleSubmit} className="mb-4 grid gap-4 md:grid-cols-3">
         <InputWrapper
           label="Package Name"
           value={formData.packageName}
@@ -86,25 +83,13 @@ export default function Search() {
           placeholder="19.1.1"
           error={formErrors.packageVersion}
         />
-        <div className="space-y-2">
-          <Label>Severity</Label>
-          <Select
-            name="severity"
-            onValueChange={(value) => setSelectedSeverity(value)}
-            value={selectedSeverity}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {SEVERITY_OPTIONS.map((option) => (
-                <SelectItem className="capitalize" key={option} value={option}>
-                  {option}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        <SelectWrapper
+          label="Severity"
+          onChange={setSelectedSeverity}
+          options={SEVERITY_OPTIONS}
+          value={selectedSeverity}
+        />
+
         <Button type="submit">Search</Button>
       </form>
 
@@ -117,7 +102,7 @@ export default function Search() {
         !isError &&
         (data.length > 0 ? (
           <>
-            <div className="-mt-4 mb-4">
+            <div className="mb-4">
               <Count amount={data.length} />
             </div>
             <AdvisoriesList advisoriesList={data} />
