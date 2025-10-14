@@ -3,7 +3,7 @@ import type { ResponseAdvisory } from './types';
 import semver from 'semver';
 import { useSearchParams } from 'react-router';
 
-export function useFilterAdvisoriesList() {
+export function useClientFilters() {
   const [searchText, setSearchText] = useState('');
   const [selectedSeverity, setSelectedSeverity] = useState('all');
 
@@ -102,7 +102,7 @@ export const useSearchPageForm = ({
   };
 };
 
-export function useAdvisorySearchParams() {
+export function useQueryParams() {
   const [searchParams, setSearchParams] = useSearchParams();
   const affects = searchParams.get('affects') || '';
   const severity = searchParams.get('severity') || 'all';

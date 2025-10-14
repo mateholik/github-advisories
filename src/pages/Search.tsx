@@ -15,13 +15,13 @@ import {
 } from '@/components/ui/select';
 import { fetchAdvisories } from '@/lib/api';
 import { SEVERITY_OPTIONS } from '@/lib/consts';
-import { useAdvisorySearchParams, useSearchPageForm } from '@/lib/hooks';
+import { useQueryParams, useSearchPageForm } from '@/lib/hooks';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
 export default function Search() {
   const { affects, severity, handleSetSearchParams, searchParamsObject } =
-    useAdvisorySearchParams();
+    useQueryParams();
 
   const [packageName = '', packageVersion = ''] = affects.split('@');
 

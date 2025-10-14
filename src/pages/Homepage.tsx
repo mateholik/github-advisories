@@ -1,7 +1,7 @@
 import { Input } from '@/components/ui/input';
 import ErrorMessage from '../components/ErrorMessage';
 import Loader from '../components/Loader';
-import { useFilterAdvisoriesList } from '../lib/hooks';
+import { useClientFilters } from '../lib/hooks';
 
 import {
   Select,
@@ -38,7 +38,7 @@ export default function Homepage() {
     filterByNameAndSeverity,
     clearForm,
     selectedSeverity,
-  } = useFilterAdvisoriesList();
+  } = useClientFilters();
 
   const filteredList = useMemo(
     () => data?.filter(filterByNameAndSeverity) || [],
