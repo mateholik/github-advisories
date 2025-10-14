@@ -61,9 +61,7 @@ test('sets validation errors correctly', () => {
   });
 
   expect(result.current.formErrors.packageName).toBe('This field is required');
-  expect(result.current.formErrors.packageVersion).toBe(
-    'Invalid version format. Example: 1.2.3'
-  );
+  expect(result.current.formErrors.packageVersion).toBe('Invalid version format. Example: 1.2.3');
 });
 
 test('passes validation when input is correct', () => {

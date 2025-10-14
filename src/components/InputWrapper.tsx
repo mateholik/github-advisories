@@ -24,7 +24,7 @@ export default function InputWrapper({
   placeholder,
 }: InputProps) {
   return (
-    <div className='space-y-2'>
+    <div className="space-y-2">
       <Label htmlFor={id}>{label}</Label>
       <Input
         value={value}

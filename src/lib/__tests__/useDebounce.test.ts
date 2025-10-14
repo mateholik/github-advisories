@@ -6,10 +6,9 @@ import { useDebounce } from '@/lib/hooks';
 vi.useFakeTimers();
 
 test('should debounce value updates', () => {
-  const { result, rerender } = renderHook(
-    ({ value }) => useDebounce(value, 500),
-    { initialProps: { value: 'a' } }
-  );
+  const { result, rerender } = renderHook(({ value }) => useDebounce(value, 500), {
+    initialProps: { value: 'a' },
+  });
 
   // initially returns same value
   expect(result.current).toBe('a');

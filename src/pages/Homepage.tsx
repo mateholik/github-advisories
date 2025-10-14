@@ -48,7 +48,7 @@ export default function Homepage() {
   return (
     <div>
       {isFetching && (
-        <div className='pt-8'>
+        <div className="pt-8">
           <Loader />
         </div>
       )}
@@ -57,26 +57,19 @@ export default function Homepage() {
 
       {filteredList && !isError && !isFetching && (
         <>
-          <div className='grid md:grid-cols-3 gap-4 py-8'>
+          <div className="grid gap-4 py-8 md:grid-cols-3">
             <Input
               value={searchText}
               onChange={(event) => setSearchText(event.target.value)}
-              placeholder='Search'
+              placeholder="Search"
             />
-            <Select
-              value={selectedSeverity}
-              onValueChange={(value) => setSelectedSeverity(value)}
-            >
-              <SelectTrigger className='w-full'>
-                <SelectValue placeholder='Severity' />
+            <Select value={selectedSeverity} onValueChange={(value) => setSelectedSeverity(value)}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Severity" />
               </SelectTrigger>
               <SelectContent>
                 {SEVERITY_OPTIONS.map((option) => (
-                  <SelectItem
-                    className='capitalize'
-                    key={option}
-                    value={option}
-                  >
+                  <SelectItem className="capitalize" key={option} value={option}>
                     {option}
                   </SelectItem>
                 ))}
@@ -84,15 +77,13 @@ export default function Homepage() {
             </Select>
             <Button onClick={clearForm}>Clear</Button>
           </div>
-          <div className='-mt-4 mb-4'>
+          <div className="-mt-4 mb-4">
             <Count amount={filteredList.length} />
           </div>
 
           <AdvisoriesList advisoriesList={filteredList} />
 
-          {filteredList.length === 0 && (
-            <ErrorMessage errorMessage='No items found' />
-          )}
+          {filteredList.length === 0 && <ErrorMessage errorMessage="No items found" />}
         </>
       )}
     </div>

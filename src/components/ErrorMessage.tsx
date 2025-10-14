@@ -3,14 +3,14 @@ type ErrorMessageProps = {
 };
 export default function ErrorMessage({ errorMessage }: ErrorMessageProps) {
   return (
-    <p className='text-red-600 flex items-center text-xs font-medium'>
+    <p className="flex items-center text-xs font-medium text-red-600">
       <img
-        className='mr-2 block size-4'
-        src='/error-icon.svg'
-        alt='eror-icon'
-        width='16'
-        height='16'
-        loading='lazy'
+        className="mr-2 block size-4"
+        src="/error-icon.svg"
+        alt="eror-icon"
+        width="16"
+        height="16"
+        loading="lazy"
       />
       {errorMessage}
     </p>

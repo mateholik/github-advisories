@@ -12,9 +12,7 @@ export function useClientFilters() {
   const filterByNameAndSeverity = useCallback(
     (item: ResponseAdvisory) => {
       return (
-        item.summary
-          .toLowerCase()
-          .includes(debouncedSearchText.toLowerCase()) &&
+        item.summary.toLowerCase().includes(debouncedSearchText.toLowerCase()) &&
         (selectedSeverity === 'all' || item.severity === selectedSeverity)
       );
     },
@@ -53,10 +51,7 @@ type SearchParams = {
   affects?: string;
   severity?: string;
 };
-export const useSearchPageForm = ({
-  initialFormData,
-  initialSeverity,
-}: UseSearchPageForm) => {
+export const useSearchPageForm = ({ initialFormData, initialSeverity }: UseSearchPageForm) => {
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [selectedSeverity, setSelectedSeverity] = useState(initialSeverity);
   const [formErrors, setFormErrors] = useState<FormErrors>({});
@@ -69,12 +64,8 @@ export const useSearchPageForm = ({
 
   const isValid = () => {
     const errors: FormErrors = {};
-    if (!formData.packageName.trim())
-      errors.packageName = 'This field is required';
-    if (
-      formData.packageVersion.trim().length > 0 &&
-      !semver.valid(formData.packageVersion.trim())
-    )
+    if (!formData.packageName.trim()) errors.packageName = 'This field is required';
+    if (formData.packageVersion.trim().length > 0 && !semver.valid(formData.packageVersion.trim()))
       errors.packageVersion = 'Invalid version format. Example: 1.2.3';
 
     setFormErrors(errors);
@@ -107,11 +98,7 @@ export function useQueryParams() {
   const affects = searchParams.get('affects') || '';
   const severity = searchParams.get('severity') || 'all';
 
-  const handleSetSearchParams = (
-    name: string,
-    version?: string,
-    severity?: string
-  ) => {
+  const handleSetSearchParams = (name: string, version?: string, severity?: string) => {
     const params: SearchParams = {};
     if (name) params.affects = version ? `${name}@${version}` : name;
     if (severity && severity !== 'all') params.severity = severity;

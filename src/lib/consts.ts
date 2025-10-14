@@ -1,11 +1,4 @@
-export const SEVERITY_OPTIONS = [
-  'all',
-  'unknown',
-  'low',
-  'medium',
-  'high',
-  'critical',
-];
+export const SEVERITY_OPTIONS = ['all', 'unknown', 'low', 'medium', 'high', 'critical'];
 
 export const SEVERITY_STYLES: Record<string, string> = {
   critical: 'text-red-700 border-red-700',

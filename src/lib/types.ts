@@ -1,9 +1,4 @@
-export type AdvisorySeverity =
-  | 'critical'
-  | 'high'
-  | 'medium'
-  | 'low'
-  | 'unknown';
+export type AdvisorySeverity = 'critical' | 'high' | 'medium' | 'low' | 'unknown';
 
 export type AdvisoryEcosystem =
   | 'rubygems'

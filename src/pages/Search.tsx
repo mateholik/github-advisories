@@ -20,8 +20,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
 export default function Search() {
-  const { affects, severity, handleSetSearchParams, searchParamsObject } =
-    useQueryParams();
+  const { affects, severity, handleSetSearchParams, searchParamsObject } = useQueryParams();
 
   const [packageName = '', packageVersion = ''] = affects.split('@');
 
@@ -61,56 +60,52 @@ export default function Search() {
     event.preventDefault();
     if (!isValid()) return;
 
-    handleSetSearchParams(
-      formData.packageName,
-      formData.packageVersion,
-      selectedSeverity
-    );
+    handleSetSearchParams(formData.packageName, formData.packageVersion, selectedSeverity);
   };
 
   return (
     <div>
-      <form onSubmit={handleSubmit} className='grid md:grid-cols-3 gap-4 py-8'>
+      <form onSubmit={handleSubmit} className="grid gap-4 py-8 md:grid-cols-3">
         <InputWrapper
-          label='Package Name'
+          label="Package Name"
           value={formData.packageName}
           onChange={handleInputChange}
-          id='packageName'
-          name='packageName'
-          type='text'
-          placeholder='react'
+          id="packageName"
+          name="packageName"
+          type="text"
+          placeholder="react"
           error={formErrors.packageName}
         />
         <InputWrapper
-          label='Package Version'
+          label="Package Version"
           value={formData.packageVersion}
           onChange={handleInputChange}
-          id='packageVersion'
-          name='packageVersion'
-          type='text'
-          placeholder='19.1.1'
+          id="packageVersion"
+          name="packageVersion"
+          type="text"
+          placeholder="19.1.1"
           error={formErrors.packageVersion}
         />
-        <div className='space-y-2'>
+        <div className="space-y-2">
           <Label>Severity</Label>
           <Select
-            name='severity'
+            name="severity"
             onValueChange={(value) => setSelectedSeverity(value)}
             value={selectedSeverity}
           >
-            <SelectTrigger className='w-full'>
+            <SelectTrigger className="w-full">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
               {SEVERITY_OPTIONS.map((option) => (
-                <SelectItem className='capitalize' key={option} value={option}>
+                <SelectItem className="capitalize" key={option} value={option}>
                   {option}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
-        <Button type='submit'>Search</Button>
+        <Button type="submit">Search</Button>
       </form>
 
       {isFetching && <Loader />}
@@ -122,13 +117,13 @@ export default function Search() {
         !isError &&
         (data.length > 0 ? (
           <>
-            <div className='-mt-4 mb-4'>
+            <div className="-mt-4 mb-4">
               <Count amount={data.length} />
             </div>
             <AdvisoriesList advisoriesList={data} />
           </>
         ) : (
-          <ErrorMessage errorMessage='No advisories found' />
+          <ErrorMessage errorMessage="No advisories found" />
         ))}
     </div>
   );
