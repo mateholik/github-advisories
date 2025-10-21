@@ -1,8 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
-import AdvisoriesList from '@/components/AdvisoriesList';
-import Count from '@/components/Count';
 import ErrorMessage from '@/components/ErrorMessage';
 import InputWrapper from '@/components/InputWrapper';
 import Loader from '@/components/Loader';
@@ -12,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { fetchAdvisories } from '@/lib/api';
 import { SEVERITY_OPTIONS } from '@/lib/consts';
 import { useQueryParams, useSearchPageForm } from '@/lib/hooks';
+import AdvisoriesListHolder from '@/components/AdvisoriesListHolder';
 
 export default function Search() {
   const { affects, severity, handleSetSearchParams, searchParamsObject } = useQueryParams();
@@ -97,19 +96,7 @@ export default function Search() {
 
       {isError && <ErrorMessage errorMessage={error.message} />}
 
-      {data &&
-        !isFetching &&
-        !isError &&
-        (data.length > 0 ? (
-          <>
-            <div className="mb-4">
-              <Count amount={data.length} />
-            </div>
-            <AdvisoriesList advisoriesList={data} />
-          </>
-        ) : (
-          <ErrorMessage errorMessage="No advisories found" />
-        ))}
+      {data && !isFetching && !isError && <AdvisoriesListHolder filteredList={data} />}
     </div>
   );
 }

@@ -3,8 +3,6 @@ import { useMemo } from 'react';
 
 import ErrorMessage from '@/components/ErrorMessage';
 import Loader from '@/components/Loader';
-import AdvisoriesList from '@/components/AdvisoriesList';
-import Count from '@/components/Count';
 import InputWrapper from '@/components/InputWrapper';
 import SelectWrapper from '@/components/SelectWrapper';
 import { Button } from '@/components/ui/button';
@@ -12,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { useClientFilters } from '@/lib/hooks';
 import { SEVERITY_OPTIONS } from '@/lib/consts';
 import { fetchAdvisories } from '@/lib/api';
+import AdvisoriesListHolder from '@/components/AdvisoriesListHolder';
 
 export default function Homepage() {
   const {
@@ -77,12 +76,8 @@ export default function Homepage() {
             </Button>
           </div>
           <div className="mb-8">
-            <Count amount={filteredList.length} />
+            <AdvisoriesListHolder filteredList={filteredList} />
           </div>
-
-          <AdvisoriesList advisoriesList={filteredList} />
-
-          {filteredList.length === 0 && <ErrorMessage errorMessage="No items found" />}
         </>
       )}
     </div>

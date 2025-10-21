@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import type { ResponseAdvisory } from './types';
+import type { ResponseAdvisory, SearchParams } from './types';
 import semver from 'semver';
 import { useSearchParams } from 'react-router';
 
@@ -47,10 +47,7 @@ type UseSearchPageForm = {
   initialFormData: FormData;
   initialSeverity: string;
 };
-type SearchParams = {
-  affects?: string;
-  severity?: string;
-};
+
 export const useSearchPageForm = ({ initialFormData, initialSeverity }: UseSearchPageForm) => {
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [selectedSeverity, setSelectedSeverity] = useState(initialSeverity);

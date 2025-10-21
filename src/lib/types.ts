@@ -52,3 +52,8 @@ export type ResponseAdvisory = {
   vulnerabilities: AdvisoryVulnerability[] | null;
   cvss: AdvisoryCVSS | null;
 };
+
+export type SearchParams = {
+  affects?: string;
+  severity?: string;
+};
