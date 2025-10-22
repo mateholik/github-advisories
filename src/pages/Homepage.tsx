@@ -1,28 +1,16 @@
-import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
-import ErrorMessage from '@/components/ErrorMessage';
-import Loader from '@/components/Loader';
 import InputWrapper from '@/components/InputWrapper';
 import SelectWrapper from '@/components/SelectWrapper';
 import { Button } from '@/components/ui/button';
 
 import { useClientFilters } from '@/lib/hooks';
 import { SEVERITY_OPTIONS } from '@/lib/consts';
-import { fetchAdvisories } from '@/lib/api';
 import AdvisoriesListHolder from '@/components/AdvisoriesListHolder';
+import { useLoaderData } from 'react-router';
 
 export default function Homepage() {
-  const {
-    data = null,
-    isFetching,
-    isError,
-    error,
-  } = useQuery({
-    queryKey: ['advisories'],
-    queryFn: () => fetchAdvisories(),
-    staleTime: 1000 * 60 * 5, // 5 min
-  });
+  const { advisories } = useLoaderData();
 
   const {
     searchText,
@@ -34,52 +22,40 @@ export default function Homepage() {
   } = useClientFilters();
 
   const filteredList = useMemo(
-    () => data?.filter(filterByNameAndSeverity) || [],
-    [data, filterByNameAndSeverity]
+    () => advisories?.filter(filterByNameAndSeverity) || [],
+    [advisories, filterByNameAndSeverity]
   );
 
   return (
     <div>
-      {isFetching && (
-        <div className="pt-8">
-          <Loader />
-        </div>
-      )}
+      <h1 className="py-12 text-center text-2xl md:py-20 md:text-4xl">
+        50 Latest global security advisories
+      </h1>
+      <div className="mb-4 grid gap-4 md:grid-cols-3">
+        <InputWrapper
+          type="text"
+          id="search"
+          name="search"
+          label="Search"
+          value={searchText}
+          onChange={(event) => setSearchText(event.target.value)}
+          placeholder="xss"
+        />
 
-      {isError && <ErrorMessage errorMessage={error.message} />}
+        <SelectWrapper
+          label="Severity"
+          onChange={setSelectedSeverity}
+          options={SEVERITY_OPTIONS}
+          value={selectedSeverity}
+        />
 
-      {filteredList && !isError && !isFetching && (
-        <>
-          <h1 className="py-12 text-center text-2xl md:py-20 md:text-4xl">
-            50 Latest global security advisories
-          </h1>
-          <div className="mb-4 grid gap-4 md:grid-cols-3">
-            <InputWrapper
-              type="text"
-              id="search"
-              name="search"
-              label="Search"
-              value={searchText}
-              onChange={(event) => setSearchText(event.target.value)}
-              placeholder="xss"
-            />
-
-            <SelectWrapper
-              label="Severity"
-              onChange={setSelectedSeverity}
-              options={SEVERITY_OPTIONS}
-              value={selectedSeverity}
-            />
-
-            <Button className="self-end" onClick={clearForm}>
-              Clear
-            </Button>
-          </div>
-          <div className="mb-8">
-            <AdvisoriesListHolder filteredList={filteredList} />
-          </div>
-        </>
-      )}
+        <Button className="self-end" onClick={clearForm}>
+          Clear
+        </Button>
+      </div>
+      <div className="mb-8">
+        <AdvisoriesListHolder filteredList={filteredList} />
+      </div>
     </div>
   );
 }

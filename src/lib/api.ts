@@ -6,6 +6,8 @@ export const fetchAdvisories = async (
   const query = new URLSearchParams({ ...params, per_page: '50' });
 
   const response = await fetch(`https://api.github.com/advisories?${query}`);
-  if (!response.ok) throw new Error('Failed to fetch filtered advisories');
-  return await response.json();
+  const data = await response.json();
+
+  if (!response.ok) throw new Error('fetchAdvisories error: ' + data.message);
+  return data;
 };
